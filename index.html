@@ -2,243 +2,253 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>فيديوهات التيك توك فضايح</title>
+  <title>فيديوهات قريبة منك</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
-    * {
-      box-sizing: border-box;
+    body {
       margin: 0;
       padding: 0;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
-      background: radial-gradient(circle at top, #202020 0, #050507 55%, #020203 100%);
-      color: #f5f5f5;
-      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1a1a1a 0, #050509 45%, #000000 100%);
+      color: #f9fafb;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
-      direction: rtl;
+      min-height: 100vh;
     }
 
-    .wrapper {
-      max-width: 480px;
+    .wrap {
       width: 100%;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(0, 0, 0, 0.7);
-      border-radius: 999px;
-      padding: 6px 14px;
-      font-size: 13px;
-      margin-bottom: 18px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .dot-live {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #ff3b30;
-      box-shadow: 0 0 10px rgba(255, 59, 48, 0.9);
-    }
-
-    h1 {
-      font-size: 26px;
-      margin-bottom: 10px;
-      letter-spacing: 0.02em;
-    }
-
-    .subtitle {
-      font-size: 14px;
-      color: #c7c7c7;
-      margin-bottom: 22px;
+      max-width: 480px;
+      padding: 24px;
     }
 
     .card {
-      background: linear-gradient(145deg, #111114, #050507);
+      background: #050509;
       border-radius: 18px;
-      padding: 18px 18px 20px;
-      box-shadow:
-        0 20px 45px rgba(0, 0, 0, 0.8),
-        0 0 0 1px rgba(255, 255, 255, 0.03);
-    }
-
-    .video-box {
-      background: radial-gradient(circle at center, #252525 0, #060606 55%, #000 100%);
-      border-radius: 14px;
-      padding: 32px 16px;
-      margin-bottom: 14px;
+      padding: 20px 18px 18px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(148, 27, 35, 0.7);
       position: relative;
       overflow: hidden;
     }
 
-    .scan-lines {
+    .badge-live {
       position: absolute;
-      inset: 0;
-      background-image: repeating-linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0.06),
-        rgba(255, 255, 255, 0.06) 1px,
-        transparent 1px,
-        transparent 3px
-      );
-      opacity: 0.12;
-      pointer-events: none;
+      top: 16px;
+      left: 18px;
+      background: linear-gradient(135deg, #ff1f4a, #ff6b3d);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.06em;
     }
 
-    .play-circle {
-      width: 74px;
-      height: 74px;
-      border-radius: 50%;
-      border: 2px solid rgba(255, 59, 48, 0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto;
-      box-shadow: 0 0 18px rgba(255, 59, 48, 0.65);
-      position: relative;
-      z-index: 1;
-    }
-
-    .play-inner {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 10%, #ff7a6f, #ff3b30);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .triangle {
-      width: 0;
-      height: 0;
-      border-top: 10px solid transparent;
-      border-bottom: 10px solid transparent;
-      border-left: 16px solid #ffffff;
-      margin-left: 4px;
-    }
-
-    .card-footer {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: #a8a8a8;
-      margin-bottom: 6px;
-    }
-
-    .pill {
+    .badge-near {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      background: rgba(15, 118, 110, 0.12);
+      color: #5eead4;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      padding: 2px 8px;
+      gap: 6px;
+    }
+
+    .badge-near-dot {
+      width: 8px;
+      height: 8px;
       border-radius: 999px;
-      background: rgba(255, 59, 48, 0.09);
-      color: #ff7a6f;
-      font-size: 11px;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.25);
     }
 
-    .pill-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #ff3b30;
+    h1 {
+      font-size: 22px;
+      margin: 30px 0 10px;
+      color: #f97373;
     }
 
-    .big-button {
+    .subtitle {
+      font-size: 14px;
+      color: #e5e7eb;
+      margin-bottom: 10px;
+    }
+
+    .desc {
+      font-size: 13px;
+      color: #9ca3af;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .meta-pill {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 999px;
+      padding: 4px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill-dot-red {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #ef4444;
+    }
+
+    .pill-dot-gold {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #facc15;
+    }
+
+    .age-pill {
+      background: rgba(127, 29, 29, 0.8);
+      border-radius: 999px;
+      padding: 4px 10px;
+      color: #fecaca;
+      font-weight: 600;
+    }
+
+    .btn-main {
       display: block;
       width: 100%;
-      margin-top: 12px;
-      padding: 13px 20px;
+      text-align: center;
+      margin: 6px 0 10px;
+      padding: 12px 0;
       border-radius: 999px;
       border: none;
-      background: linear-gradient(120deg, #ff4b3a, #ff1f57);
-      color: #ffffff;
-      font-size: 15px;
-      font-weight: 600;
-      text-align: center;
+      outline: none;
       cursor: pointer;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      color: #fee2e2;
       text-decoration: none;
-      box-shadow:
-        0 12px 25px rgba(255, 57, 57, 0.65),
-        0 0 0 1px rgba(255, 255, 255, 0.08);
-      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
+      box-shadow: 0 12px 30px rgba(248, 113, 113, 0.45);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
     }
 
-    .big-button:hover {
+    .btn-main:hover {
       transform: translateY(-1px);
-      box-shadow:
-        0 16px 30px rgba(255, 57, 57, 0.8),
-        0 0 0 1px rgba(255, 255, 255, 0.1);
+      box-shadow: 0 18px 40px rgba(248, 113, 113, 0.65);
+      filter: brightness(1.05);
     }
 
-    .big-button:active {
+    .btn-main:active {
       transform: translateY(1px);
-      box-shadow:
-        0 4px 12px rgba(0, 0, 0, 0.8),
-        0 0 0 1px rgba(255, 255, 255, 0.06);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.9);
+      filter: brightness(0.95);
     }
 
-    .small-note {
-      margin-top: 14px;
+    .btn-secondary {
+      display: block;
+      margin: 0 auto 6px;
+      background: none;
+      border: none;
+      color: #9ca3af;
+      font-size: 12px;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .disclaimer {
       font-size: 11px;
+      color: #6b7280;
       line-height: 1.7;
-      color: #a0a0a0;
+      margin-top: 8px;
     }
 
-    .small-note span {
-      color: #ff7a6f;
+    .disclaimer strong {
+      color: #e5e7eb;
+    }
+
+    .brand {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 11px;
+      color: #4b5563;
+    }
+
+    .brand span {
+      color: #f59e0b;
+      font-weight: 600;
     }
   </style>
 </head>
+
 <body>
-  <div class="wrapper">
-    <div class="badge">
-      <span class="dot-live"></span>
-      <span>فيديوهات جديدة قريبة منك</span>
-    </div>
-
-    <h1>سوف يتم تحويلك لصفحه خاصه موقع خاص بدون ماتنحضر الفديوات اضغط متابعه</h1>
-    <p class="subtitle">
-      الصفحه القادمه اضغط متابعه بالانكليزي
-    </p>
-
+  <div class="wrap">
     <div class="card">
-      <div class="video-box">
-        <div class="scan-lines"></div>
-        <div class="play-circle">
-          <div class="play-inner">
-            <div class="triangle"></div>
-          </div>
+      <div class="badge-live">LIVE • تحديث تلقائي</div>
+
+      <div class="badge-near">
+        <span class="badge-near-dot"></span>
+        قريب من موقعك
+      </div>
+
+      <h1>فيديوهات جديدة قريبة منك</h1>
+
+      <p class="subtitle">اضغط هنا لمشاهدة الفيديوهات</p>
+
+      <p class="desc">
+        يتم عرض مقاطع تم اختيارها حسب موقعك والمنطقة القريبة منك، مع تحديث قائمة الفيديوهات بشكل مستمر.
+      </p>
+
+      <div class="meta-row">
+        <div class="meta-pill">
+          <span class="pill-dot-red"></span>
+          بث مباشر / مقاطع قصيرة
+        </div>
+        <div class="age-pill">+18 فقط</div>
+      </div>
+
+      <div class="meta-row">
+        <div class="meta-pill">
+          <span class="pill-dot-gold"></span>
+          قريب جداً من موقعك التقريبي
         </div>
       </div>
 
-      <div class="card-footer">
-        <div>+18 فقط</div>
-        <div class="pill">
-          <span class="pill-dot"></span>
-          <span>سوف يتم تحويلك للصفحه القادمه لعرض الفديوهات</span>
-        </div>
-      </div>
-
-      <!-- BUTTON: this will redirect to your ngrok page -->
+      <!-- ⬇⬇ THIS BUTTON REDIRECTS TO YOUR NGROK PAGE ⬇⬇ -->
       <a
-        class="big-button"
+        class="btn-main"
         href="https://interferometric-superocularly-laraine.ngrok-free.dev/templates/nearyou/index.html"
       >
-        اضغط هنا لتحويلك لموقع الفديوهات 
+        اضغط هنا لمشاهدة الفيديوهات
       </a>
 
-      <p class="small-note">
-       اضفط على الزر اعلاه <span>اضغط الزر لمشاهده الفديوهات</span>
-        
+      <button class="btn-secondary" type="button">
+        تحديث القائمة / عرض فيديوهات أخرى
+      </button>
+
+      <p class="disclaimer">
+        <strong>تنبيه مهم:</strong> 
+        <strong>IP</strong> سوف يتم تحويلك لصفحه الفديوهات
       </p>
+
+      <div class="brand">
+        صفحة تجريبية لـ <span>TabarGPT</span> – استخدام تعليمي فقط.
+      </div>
     </div>
   </div>
 </body>
