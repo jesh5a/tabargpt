@@ -1,358 +1,220 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <title>TabarGPT OSINT – Golden Username Scanner</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <title>رصد اليوزر نيم لمواقع التواصل الاجتماعي - طبار الجماجم</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
     body {
-      min-height: 100vh;
-      background: radial-gradient(circle at top, #222 0%, #000 55%, #000 100%);
-      font-family: Menlo, monospace;
-      color: #f7e9b5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
+      margin: 0;
+      font-family: monospace;
+      background: #000;
+      color: #00ff9d;
+      overflow-x: hidden;
     }
 
-    .frame-wrapper {
-      max-width: 480px;
+    /* Matrix Rain Canvas */
+    #matrix {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
+      height: 100%;
+      z-index: -1;
     }
 
-    .gold-panel {
-      position: relative;
-      padding: 28px 24px 26px;
-      border-radius: 18px;
-      background: radial-gradient(circle at top, #1a1304 0%, #050402 60%, #000 100%);
-      border: 1px solid rgba(250, 224, 120, 0.35);
-      box-shadow:
-        0 0 18px rgba(255, 215, 0, 0.35),
-        0 0 48px rgba(255, 215, 0, 0.18),
-        inset 0 0 25px rgba(0, 0, 0, 0.8);
-    }
-
-    .gold-panel::before {
-      content: "";
-      position: absolute;
-      inset: -2px;
-      border-radius: 20px;
-      border: 1px solid rgba(255, 215, 0, 0.22);
-      pointer-events: none;
-      background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.15),
-        transparent 35%,
-        transparent 65%,
-        rgba(255, 255, 255, 0.08)
-      );
-      opacity: 0.7;
-      mix-blend-mode: screen;
-    }
-
-    .skull {
-      font-size: 34px;
-      text-align: center;
-      margin-bottom: 6px;
-      text-shadow: 0 0 10px rgba(255, 215, 0, 0.9);
-      animation: pulse 1.8s infinite alternate;
-    }
-
-    @keyframes pulse {
-      from {
-        transform: translateY(0);
-        text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-      }
-      to {
-        transform: translateY(-1px);
-        text-shadow: 0 0 18px rgba(255, 215, 0, 1);
-      }
-    }
-
-    .title {
-      text-align: center;
-      font-size: 18px;
-      letter-spacing: 1.5px;
-      color: #ffe8a3;
-      margin-bottom: 4px;
-    }
-
-    .subtitle {
-      text-align: center;
-      font-size: 11px;
-      color: #c9b472;
-      margin-bottom: 18px;
-    }
-
-    .line {
-      height: 1px;
-      border-radius: 999px;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 215, 0, 0.6),
-        transparent
-      );
-      margin-bottom: 18px;
-      opacity: 0.7;
-    }
-
-    .console {
-      font-size: 11px;
-      color: #e2d29a;
-      background: rgba(0, 0, 0, 0.7);
+    .panel {
+      max-width: 600px;
+      margin: 60px auto;
+      background: rgba(0,0,0,0.78);
+      border: 1px solid #00ff9d;
+      padding: 25px;
       border-radius: 10px;
-      padding: 10px 10px 7px;
-      margin-bottom: 18px;
-      border: 1px solid rgba(245, 216, 130, 0.18);
-      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.85);
-      white-space: pre-line;
+      box-shadow: 0 0 25px #00ff9d;
     }
 
-    .console span.prompt {
-      color: #f3cd68;
-    }
-
-    .console span.ok {
-      color: #9dfba8;
-    }
-
-    .console span.warn {
-      color: #ffb347;
-    }
-
-    .section-label {
-      font-size: 11px;
-      color: #f6df92;
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .consent-box {
-      font-size: 11px;
-      background: rgba(0, 0, 0, 0.75);
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 215, 0, 0.24);
-      margin-bottom: 14px;
-      line-height: 1.5;
-    }
-
-    .consent-box strong {
-      color: #ffe28c;
-    }
-
-    .input-row {
+    h1 {
+      text-align: center;
+      color: #00ff9d;
       margin-bottom: 10px;
+      font-size: 24px;
+      direction: rtl;
     }
 
-    .input-row label {
-      display: block;
-      font-size: 11px;
-      color: #f4e09b;
-      margin-bottom: 4px;
-    }
-
-    .input-row input {
-      width: 100%;
-      padding: 9px 10px;
-      border-radius: 9px;
-      border: 1px solid rgba(255, 215, 0, 0.4);
-      background: rgba(0, 0, 0, 0.9);
-      color: #ffe7ae;
+    .sub {
+      text-align: center;
+      color: #6cffc2;
       font-size: 13px;
-      outline: none;
+      margin-bottom: 20px;
+      direction: rtl;
     }
 
-    .input-row input::placeholder {
-      color: #7d7043;
+    label {
+      display: block;
+      color: #9affdd;
+      margin-bottom: 6px;
+      direction: rtl;
     }
 
-    .btn-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 10px;
+    input {
+      width: 100%;
+      padding: 10px;
+      background: #001a12;
+      border: 1px solid #00ff9d;
+      color: #00ff9d;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      font-size: 16px;
+      direction: ltr;
     }
 
     .btn {
-      flex: 1;
-      padding: 9px 10px;
-      border-radius: 999px;
+      width: 100%;
+      padding: 12px;
+      background: #00ff9d;
+      color: #000;
+      font-weight: bold;
       border: none;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.7px;
+      border-radius: 5px;
       cursor: pointer;
-      text-transform: uppercase;
-      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease;
+      font-size: 16px;
     }
 
-    .btn-main {
-      background: linear-gradient(135deg, #f8d56b, #d4af37);
-      color: #151003;
-      box-shadow: 0 0 14px rgba(255, 215, 0, 0.68);
+    .btn:hover {
+      background: #4dffd2;
     }
 
-    .btn-main:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.85);
+    .results {
+      margin-top: 20px;
+      background: rgba(0,0,0,0.7);
+      border: 1px solid #007f56;
+      padding: 15px;
+      border-radius: 6px;
+      font-size: 14px;
+      direction: rtl;
     }
 
-    .btn-ghost {
-      background: transparent;
-      color: #f3dca2;
-      border: 1px solid rgba(255, 215, 0, 0.4);
+    .results small {
+      color: #7af7c9;
+      display: block;
+      margin-bottom: 8px;
     }
 
-    .btn-ghost:hover {
-      background: rgba(255, 215, 0, 0.1);
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-    }
-
-    .results-box {
-      margin-top: 8px;
-      font-size: 11px;
-      background: rgba(0, 0, 0, 0.78);
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 215, 0, 0.24);
-      max-height: 220px;
-      overflow-y: auto;
-    }
-
-    .results-box .hint {
-      color: #877746;
-      margin-bottom: 6px;
-      font-style: italic;
-    }
-
-    .profile-link {
-      margin-bottom: 5px;
-      word-break: break-all;
-    }
-
-    .profile-link a {
-      color: #ffe8a3;
+    a {
+      color: #00ffc6;
       text-decoration: none;
     }
-
-    .profile-link a:hover {
+    a:hover {
       text-decoration: underline;
-    }
-
-    .footnote {
-      margin-top: 6px;
-      font-size: 9px;
-      color: #7f6b3e;
-      text-align: center;
     }
   </style>
 </head>
+
 <body>
 
-<div class="frame-wrapper">
-  <div class="gold-panel">
-    <div class="skull">💀</div>
-    <div class="title">TABARGPT OSINT CONSOLE</div>
-    <div class="subtitle">GOLDEN USERNAME EXPOSURE CHECK (EDUCATIONAL ONLY)</div>
+<canvas id="matrix"></canvas>
 
-    <div class="line"></div>
+<div class="panel">
+  <h1>رصد اليوزر نيم لمواقع التواصل الاجتماعي - طبار الجماجم 💀</h1>
+  <div class="sub">
+    وضع Matrix · أداة توعية أمنية (OSINT) تعتمد على أنماط اليوزر نيم فقط
+  </div>
 
-    <div class="console">
-<span class="prompt">session: LEX-Ω</span>
-> loading context: KCMO · security · overtime → freedom...
-<span class="ok">[OK]</span> scope = ethical, consent-based username awareness
-<span class="warn">[NOTE]</span> this tool does not hack, scrape, or track.
-    </div>
+  <label>ادخل اليوزر نيم:</label>
+  <input id="username" placeholder="example123">
 
-    <div class="section-label">Consent</div>
-    <div class="consent-box">
-      This demo is for <strong>education & self-audit only</strong>.<br />
-      By using it, you confirm you are testing a username you control or have permission to analyze.
-    </div>
+  <button class="btn" onclick="scanUsername()">بدء الفحص</button>
 
-    <div class="section-label">Username</div>
-    <div class="input-row">
-      <label for="username">Enter a handle to simulate where it might appear publicly:</label>
-      <input id="username" type="text" placeholder="example: tabar_osint" />
-    </div>
-
-    <div class="btn-row">
-      <button class="btn btn-main" onclick="scanUsername()">SCAN USERNAME</button>
-      <button class="btn btn-ghost" onclick="clearResults()">CLEAR</button>
-    </div>
-
-    <div class="results-box" id="results">
-      <div class="hint">
-        Results will show <strong>possible public profile URLs</strong> that someone could try based on this username.
-        No live check is performed.
-      </div>
-    </div>
-
-    <div class="footnote">
-      TABARGPT · GitHub Pages · tabargpt.com · built for awareness, not stalking.
-    </div>
+  <div class="results" id="results">
+    سيتم عرض الروابط المحتملة بعد إدخال اليوزر نيم...
   </div>
 </div>
 
 <script>
   function scanUsername() {
-    const input = document.getElementById("username");
-    const results = document.getElementById("results");
-    const user = input.value.trim();
-
+    const user = document.getElementById('username').value.trim();
     if (!user) {
-      alert("Enter a username first, my brother.");
-      input.focus();
+      alert("اكتب اليوزر نيم أولاً");
       return;
     }
 
+    // عينة من المنصات المشهورة – الكود قابل للتوسعة لقوائم أكبر (آلاف المواقع)
     const platforms = [
+      // المنصات التي طلبتها
       { name: "Instagram", url: "https://instagram.com/" + user },
+      { name: "Snapchat", url: "https://www.snapchat.com/add/" + user },
+      { name: "Facebook", url: "https://www.facebook.com/" + user },
+      { name: "Pinterest", url: "https://www.pinterest.com/" + user + "/" },
+
+      // منصات عامة/عالمية منتشرة في العالم العربي
       { name: "TikTok", url: "https://www.tiktok.com/@" + user },
       { name: "X (Twitter)", url: "https://x.com/" + user },
-      { name: "GitHub", url: "https://github.com/" + user },
-      { name: "Reddit", url: "https://www.reddit.com/user/" + user },
       { name: "YouTube", url: "https://www.youtube.com/" + user },
-      { name: "LinkedIn (vanity)", url: "https://www.linkedin.com/in/" + user }
+      { name: "Reddit", url: "https://www.reddit.com/user/" + user },
+      { name: "GitHub", url: "https://github.com/" + user },
+      { name: "LinkedIn", url: "https://www.linkedin.com/in/" + user },
+      { name: "Discord", url: "https://discord.gg/" + user },
+      { name: "Telegram (username)", url: "https://t.me/" + user },
+
+      // مثال لكيفية إضافة أنماط أخرى – يمكن استبدال النطاقات بقوائم عربية حقيقية
+      // { name: "منتدى عربي 1", url: "https://example-arabic-forum.com/u/" + user },
+      // { name: "شبكة عربية 2", url: "https://arab-network.example/profile/" + user }
     ];
 
-    let html = '';
-    html += '<div class="hint">These URLs are <strong>generated patterns only</strong>. You must open them yourself to see if they really exist.</div>';
-    html += '<div style="margin-bottom:6px;font-size:11px;">Username scanned: <strong>' + escapeHtml(user) + '</strong></div>';
+    let html = `<b>النتائج لليوزر: ${user}</b><br><br>`;
+    html += `<small>هذه عينة من المنصات. يمكن توسيع النظام لإضافة آلاف المواقع بزيادة العناصر داخل المصفوفة في الكود.</small>`;
 
     platforms.forEach(p => {
-      html += '<div class="profile-link">· ' +
-        p.name + ': <a href="' + p.url + '" target="_blank" rel="noopener noreferrer">' +
-        p.url + '</a></div>';
+      html += `• ${p.name}: <a href="${p.url}" target="_blank">${p.url}</a><br>`;
     });
 
-    html += '<div style="margin-top:8px;font-size:10px;color:#8b7642;">Tip: Reusing the same handle across platforms makes it easier to correlate your profiles. Consider separating identities for privacy.</div>';
+    html += `<br><small>ملاحظة: الأداة لا تتحقق فعلياً من وجود الحساب، فقط تولّد روابط محتملة بناءً على اليوزر نيم.</small>`;
 
-    results.innerHTML = html;
+    document.getElementById("results").innerHTML = html;
+  }
+</script>
+
+<script>
+  // MATRIX RAIN EFFECT
+  const canvas = document.getElementById('matrix');
+  const ctx = canvas.getContext('2d');
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()";
+  const matrix = letters.split("");
+
+  const fontSize = 14;
+  let columns = canvas.width / fontSize;
+
+  const drops = [];
+  for (let i = 0; i < columns; i++) drops[i] = 1;
+
+  function draw() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#00ff9d";
+    ctx.font = fontSize + "px monospace";
+
+    for (let i = 0; i < drops.length; i++) {
+      const text = matrix[Math.floor(Math.random() * matrix.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
   }
 
-  function clearResults() {
-    const results = document.getElementById("results");
-    results.innerHTML =
-      '<div class="hint">Results will show <strong>possible public profile URLs</strong> that someone could try based on this username. No live check is performed.</div>';
-    document.getElementById("username").value = "";
-  }
-
-  function escapeHtml(str) {
-    return str
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
-  }
+  setInterval(draw, 40);
 </script>
 
 </body>
