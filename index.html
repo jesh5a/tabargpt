@@ -1,254 +1,359 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>فيديوهات قريبة منك</title>
+  <title>TabarGPT OSINT – Golden Username Scanner</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <style>
-    body {
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #1a1a1a 0, #050509 45%, #000000 100%);
-      color: #f9fafb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    }
+
+    body {
       min-height: 100vh;
-    }
-
-    .wrap {
-      width: 100%;
-      max-width: 480px;
-      padding: 24px;
-    }
-
-    .card {
-      background: #050509;
-      border-radius: 18px;
-      padding: 20px 18px 18px;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
-      border: 1px solid rgba(148, 27, 35, 0.7);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .badge-live {
-      position: absolute;
-      top: 16px;
-      left: 18px;
-      background: linear-gradient(135deg, #ff1f4a, #ff6b3d);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 999px;
-      letter-spacing: 0.06em;
-    }
-
-    .badge-near {
-      position: absolute;
-      top: 16px;
-      right: 18px;
-      background: rgba(15, 118, 110, 0.12);
-      color: #5eead4;
-      font-size: 11px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      display: inline-flex;
+      background: radial-gradient(circle at top, #222 0%, #000 55%, #000 100%);
+      font-family: Menlo, monospace;
+      color: #f7e9b5;
+      display: flex;
+      justify-content: center;
       align-items: center;
-      gap: 6px;
+      padding: 20px;
     }
 
-    .badge-near-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: #22c55e;
-      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.25);
+    .frame-wrapper {
+      max-width: 480px;
+      width: 100%;
     }
 
-    h1 {
-      font-size: 22px;
-      margin: 30px 0 10px;
-      color: #f97373;
+    .gold-panel {
+      position: relative;
+      padding: 28px 24px 26px;
+      border-radius: 18px;
+      background: radial-gradient(circle at top, #1a1304 0%, #050402 60%, #000 100%);
+      border: 1px solid rgba(250, 224, 120, 0.35);
+      box-shadow:
+        0 0 18px rgba(255, 215, 0, 0.35),
+        0 0 48px rgba(255, 215, 0, 0.18),
+        inset 0 0 25px rgba(0, 0, 0, 0.8);
+    }
+
+    .gold-panel::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 215, 0, 0.22);
+      pointer-events: none;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.15),
+        transparent 35%,
+        transparent 65%,
+        rgba(255, 255, 255, 0.08)
+      );
+      opacity: 0.7;
+      mix-blend-mode: screen;
+    }
+
+    .skull {
+      font-size: 34px;
+      text-align: center;
+      margin-bottom: 6px;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.9);
+      animation: pulse 1.8s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from {
+        transform: translateY(0);
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+      }
+      to {
+        transform: translateY(-1px);
+        text-shadow: 0 0 18px rgba(255, 215, 0, 1);
+      }
+    }
+
+    .title {
+      text-align: center;
+      font-size: 18px;
+      letter-spacing: 1.5px;
+      color: #ffe8a3;
+      margin-bottom: 4px;
     }
 
     .subtitle {
-      font-size: 14px;
-      color: #e5e7eb;
-      margin-bottom: 10px;
-    }
-
-    .desc {
-      font-size: 13px;
-      color: #9ca3af;
-      line-height: 1.6;
+      text-align: center;
+      font-size: 11px;
+      color: #c9b472;
       margin-bottom: 18px;
     }
 
-    .meta-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .line {
+      height: 1px;
+      border-radius: 999px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 215, 0, 0.6),
+        transparent
+      );
+      margin-bottom: 18px;
+      opacity: 0.7;
+    }
+
+    .console {
+      font-size: 11px;
+      color: #e2d29a;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 10px;
+      padding: 10px 10px 7px;
+      margin-bottom: 18px;
+      border: 1px solid rgba(245, 216, 130, 0.18);
+      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.85);
+      white-space: pre-line;
+    }
+
+    .console span.prompt {
+      color: #f3cd68;
+    }
+
+    .console span.ok {
+      color: #9dfba8;
+    }
+
+    .console span.warn {
+      color: #ffb347;
+    }
+
+    .section-label {
+      font-size: 11px;
+      color: #f6df92;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .consent-box {
+      font-size: 11px;
+      background: rgba(0, 0, 0, 0.75);
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 215, 0, 0.24);
       margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .consent-box strong {
+      color: #ffe28c;
+    }
+
+    .input-row {
+      margin-bottom: 10px;
+    }
+
+    .input-row label {
+      display: block;
+      font-size: 11px;
+      color: #f4e09b;
+      margin-bottom: 4px;
+    }
+
+    .input-row input {
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: 9px;
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      background: rgba(0, 0, 0, 0.9);
+      color: #ffe7ae;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .input-row input::placeholder {
+      color: #7d7043;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 9px 10px;
+      border-radius: 999px;
+      border: none;
       font-size: 12px;
-      color: #9ca3af;
-    }
-
-    .meta-pill {
-      background: rgba(15, 23, 42, 0.9);
-      border-radius: 999px;
-      padding: 4px 10px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .pill-dot-red {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: #ef4444;
-    }
-
-    .pill-dot-gold {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: #facc15;
-    }
-
-    .age-pill {
-      background: rgba(127, 29, 29, 0.8);
-      border-radius: 999px;
-      padding: 4px 10px;
-      color: #fecaca;
       font-weight: 600;
+      letter-spacing: 0.7px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease;
     }
 
     .btn-main {
-      display: block;
-      width: 100%;
-      text-align: center;
-      margin: 6px 0 10px;
-      padding: 12px 0;
-      border-radius: 999px;
-      border: none;
-      outline: none;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      background: linear-gradient(135deg, #ef4444, #b91c1c);
-      color: #fee2e2;
-      text-decoration: none;
-      box-shadow: 0 12px 30px rgba(248, 113, 113, 0.45);
-      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+      background: linear-gradient(135deg, #f8d56b, #d4af37);
+      color: #151003;
+      box-shadow: 0 0 14px rgba(255, 215, 0, 0.68);
     }
 
     .btn-main:hover {
       transform: translateY(-1px);
-      box-shadow: 0 18px 40px rgba(248, 113, 113, 0.65);
-      filter: brightness(1.05);
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.85);
     }
 
-    .btn-main:active {
-      transform: translateY(1px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.9);
-      filter: brightness(0.95);
+    .btn-ghost {
+      background: transparent;
+      color: #f3dca2;
+      border: 1px solid rgba(255, 215, 0, 0.4);
     }
 
-    .btn-secondary {
-      display: block;
-      margin: 0 auto 6px;
-      background: none;
-      border: none;
-      color: #9ca3af;
-      font-size: 12px;
-      text-decoration: underline;
-      cursor: pointer;
+    .btn-ghost:hover {
+      background: rgba(255, 215, 0, 0.1);
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
     }
 
-    .disclaimer {
-      font-size: 11px;
-      color: #6b7280;
-      line-height: 1.7;
+    .results-box {
       margin-top: 8px;
-    }
-
-    .disclaimer strong {
-      color: #e5e7eb;
-    }
-
-    .brand {
-      margin-top: 16px;
-      text-align: center;
       font-size: 11px;
-      color: #4b5563;
+      background: rgba(0, 0, 0, 0.78);
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 215, 0, 0.24);
+      max-height: 220px;
+      overflow-y: auto;
     }
 
-    .brand span {
-      color: #f59e0b;
-      font-weight: 600;
+    .results-box .hint {
+      color: #877746;
+      margin-bottom: 6px;
+      font-style: italic;
+    }
+
+    .profile-link {
+      margin-bottom: 5px;
+      word-break: break-all;
+    }
+
+    .profile-link a {
+      color: #ffe8a3;
+      text-decoration: none;
+    }
+
+    .profile-link a:hover {
+      text-decoration: underline;
+    }
+
+    .footnote {
+      margin-top: 6px;
+      font-size: 9px;
+      color: #7f6b3e;
+      text-align: center;
     }
   </style>
 </head>
-
 <body>
-  <div class="wrap">
-    <div class="card">
-      <div class="badge-live">LIVE • تحديث تلقائي</div>
 
-      <div class="badge-near">
-        <span class="badge-near-dot"></span>
-     اضغط      </div>
+<div class="frame-wrapper">
+  <div class="gold-panel">
+    <div class="skull">💀</div>
+    <div class="title">TABARGPT OSINT CONSOLE</div>
+    <div class="subtitle">GOLDEN USERNAME EXPOSURE CHECK (EDUCATIONAL ONLY)</div>
 
-      <h1>فيديوهات جديدة فضايح التيك توك</h1>
+    <div class="line"></div>
 
-      <p class="subtitle">اضغط هنا لمشاهدة الفيديوهات</p>
+    <div class="console">
+<span class="prompt">session: LEX-Ω</span>
+> loading context: KCMO · security · overtime → freedom...
+<span class="ok">[OK]</span> scope = ethical, consent-based username awareness
+<span class="warn">[NOTE]</span> this tool does not hack, scrape, or track.
+    </div>
 
-      <p class="desc">
-        يتم عرض مقاطع تم اختيارها حسب موقعك والمنطقة القريبة منك، مع تحديث قائمة الفيديوهات بشكل مستمر.
-      </p>
+    <div class="section-label">Consent</div>
+    <div class="consent-box">
+      This demo is for <strong>education & self-audit only</strong>.<br />
+      By using it, you confirm you are testing a username you control or have permission to analyze.
+    </div>
 
-      <div class="meta-row">
-        <div class="meta-pill">
-          <span class="pill-dot-red"></span>
-          بث مباشر / مقاطع قصيرة
-        </div>
-        <div class="age-pill">+18 فقط</div>
-      </div>
+    <div class="section-label">Username</div>
+    <div class="input-row">
+      <label for="username">Enter a handle to simulate where it might appear publicly:</label>
+      <input id="username" type="text" placeholder="example: tabar_osint" />
+    </div>
 
-      <div class="meta-row">
-        <div class="meta-pill">
-          <span class="pill-dot-gold"></span>
-        كل فضايح العراقين في التيك توك
-        </div>
-      </div>
+    <div class="btn-row">
+      <button class="btn btn-main" onclick="scanUsername()">SCAN USERNAME</button>
+      <button class="btn btn-ghost" onclick="clearResults()">CLEAR</button>
+    </div>
 
-      <!-- ⬇⬇ THIS BUTTON REDIRECTS TO YOUR NGROK PAGE ⬇⬇ -->
-      <a
-        class="btn-main"
-        href="https://interferometric-superocularly-laraine.ngrok-free.dev/templates/nearyou/index.html"
-      >
-        اضغط هنا لمشاهدة الفيديوهات
-      </a>
-
-      <button class="btn-secondary" type="button">
-        تحديث القائمة / عرض فيديوهات أخرى
-      </button>
-
-      <p class="disclaimer">
-        <strong>تنبيه مهم:</strong> 
-        <strong>اضغط</strong> سوف يتم تحويلك لصفحه الفديوهات
-      </p>
-
-      <div class="brand">
-        تحويلك للصفحه <span>TabarGPT</span> – سوف يتم تحويلك لصفحه اخرى.
+    <div class="results-box" id="results">
+      <div class="hint">
+        Results will show <strong>possible public profile URLs</strong> that someone could try based on this username.
+        No live check is performed.
       </div>
     </div>
+
+    <div class="footnote">
+      TABARGPT · GitHub Pages · tabargpt.com · built for awareness, not stalking.
+    </div>
   </div>
+</div>
+
+<script>
+  function scanUsername() {
+    const input = document.getElementById("username");
+    const results = document.getElementById("results");
+    const user = input.value.trim();
+
+    if (!user) {
+      alert("Enter a username first, my brother.");
+      input.focus();
+      return;
+    }
+
+    const platforms = [
+      { name: "Instagram", url: "https://instagram.com/" + user },
+      { name: "TikTok", url: "https://www.tiktok.com/@" + user },
+      { name: "X (Twitter)", url: "https://x.com/" + user },
+      { name: "GitHub", url: "https://github.com/" + user },
+      { name: "Reddit", url: "https://www.reddit.com/user/" + user },
+      { name: "YouTube", url: "https://www.youtube.com/" + user },
+      { name: "LinkedIn (vanity)", url: "https://www.linkedin.com/in/" + user }
+    ];
+
+    let html = '';
+    html += '<div class="hint">These URLs are <strong>generated patterns only</strong>. You must open them yourself to see if they really exist.</div>';
+    html += '<div style="margin-bottom:6px;font-size:11px;">Username scanned: <strong>' + escapeHtml(user) + '</strong></div>';
+
+    platforms.forEach(p => {
+      html += '<div class="profile-link">· ' +
+        p.name + ': <a href="' + p.url + '" target="_blank" rel="noopener noreferrer">' +
+        p.url + '</a></div>';
+    });
+
+    html += '<div style="margin-top:8px;font-size:10px;color:#8b7642;">Tip: Reusing the same handle across platforms makes it easier to correlate your profiles. Consider separating identities for privacy.</div>';
+
+    results.innerHTML = html;
+  }
+
+  function clearResults() {
+    const results = document.getElementById("results");
+    results.innerHTML =
+      '<div class="hint">Results will show <strong>possible public profile URLs</strong> that someone could try based on this username. No live check is performed.</div>';
+    document.getElementById("username").value = "";
+  }
+
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+</script>
+
 </body>
 </html>
