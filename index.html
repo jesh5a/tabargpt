@@ -8,170 +8,201 @@
   <style>
     body {
       margin: 0;
-      font-family: monospace;
+      font-family: 'Courier New', monospace;
       background: #000;
-      color: #00ff9d;
+      color: #0aff9d;
       overflow-x: hidden;
     }
 
-    /* Matrix Rain Canvas */
+    /* Matrix background canvas */
     #matrix {
       position: fixed;
-      top: 0;
-      left: 0;
+      inset: 0;
       width: 100%;
       height: 100%;
       z-index: -1;
     }
 
     .panel {
-      max-width: 600px;
-      margin: 60px auto;
-      background: rgba(0,0,0,0.78);
-      border: 1px solid #00ff9d;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 0 25px #00ff9d;
+      max-width: 650px;
+      margin: 70px auto;
+      background: rgba(0, 0, 0, 0.82);
+      border: 1px solid #0aff9d;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 0 35px #00ffcc;
     }
 
     h1 {
       text-align: center;
-      color: #00ff9d;
-      margin-bottom: 10px;
-      font-size: 24px;
+      font-size: 26px;
+      color: #00ffcc;
+      text-shadow: 0 0 15px #00ffcc;
       direction: rtl;
+      margin-bottom: 10px;
     }
 
     .sub {
       text-align: center;
-      color: #6cffc2;
-      font-size: 13px;
-      margin-bottom: 20px;
+      color: #7bffdf;
+      margin-bottom: 25px;
+      font-size: 14px;
       direction: rtl;
     }
 
     label {
-      display: block;
-      color: #9affdd;
+      color: #a8ffe8;
       margin-bottom: 6px;
+      display: block;
+      font-size: 14px;
       direction: rtl;
     }
 
     input {
       width: 100%;
-      padding: 10px;
-      background: #001a12;
-      border: 1px solid #00ff9d;
-      color: #00ff9d;
-      border-radius: 5px;
-      margin-bottom: 15px;
+      padding: 12px;
+      background: #001f17;
+      border: 1px solid #00ffcc;
+      color: #00ffcc;
       font-size: 16px;
+      border-radius: 6px;
+      margin-bottom: 15px;
       direction: ltr;
+      text-shadow: 0 0 5px #00ffcc;
     }
 
     .btn {
       width: 100%;
       padding: 12px;
-      background: #00ff9d;
+      background: #00ffcc;
       color: #000;
       font-weight: bold;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 17px;
+      box-shadow: 0 0 15px #00ffcc;
+      margin-bottom: 10px;
     }
 
     .btn:hover {
-      background: #4dffd2;
+      background: #5fffe1;
+    }
+
+    .scan-status {
+      text-align: center;
+      font-size: 16px;
+      color: #7bffdf;
+      margin-bottom: 10px;
+      height: 22px;
+      direction: rtl;
+    }
+
+    .loader {
+      display: none;
+      margin: 10px auto;
+      border: 5px solid #004d3b;
+      border-top: 5px solid #00ffcc;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
     }
 
     .results {
       margin-top: 20px;
-      background: rgba(0,0,0,0.7);
-      border: 1px solid #007f56;
+      background: rgba(0, 0, 0, 0.78);
+      border: 1px solid #007f5e;
       padding: 15px;
       border-radius: 6px;
-      font-size: 14px;
+      font-size: 15px;
       direction: rtl;
     }
 
-    .results small {
-      color: #7af7c9;
-      display: block;
-      margin-bottom: 8px;
-    }
-
-    a {
-      color: #00ffc6;
+    .results a {
+      color: #00ffc9;
       text-decoration: none;
     }
-    a:hover {
+
+    .results a:hover {
       text-decoration: underline;
     }
   </style>
 </head>
-
 <body>
 
 <canvas id="matrix"></canvas>
 
 <div class="panel">
   <h1>رصد اليوزر نيم لمواقع التواصل الاجتماعي - طبار الجماجم 💀</h1>
-  <div class="sub">
-    وضع Matrix · أداة توعية أمنية (OSINT) تعتمد على أنماط اليوزر نيم فقط
-  </div>
+  <div class="sub"> أداة رصد(OSINT) تعتمد على أنماط اليوزر نيم فقط · فحص صوري لحد 3000 موقع</div>
 
   <label>ادخل اليوزر نيم:</label>
   <input id="username" placeholder="example123">
 
-  <button class="btn" onclick="scanUsername()">بدء الفحص</button>
+  <div class="scan-status" id="scanStatus"></div>
+  <div class="loader" id="loader"></div>
+
+  <button class="btn" onclick="startScan()">بدء الفحص</button>
 
   <div class="results" id="results">
-    سيتم عرض الروابط المحتملة بعد إدخال اليوزر نيم...
+    سيتم عرض النتائج هنا بعد اتمام الفحص.
   </div>
 </div>
 
 <script>
-  function scanUsername() {
-    const user = document.getElementById('username').value.trim();
+  const platforms = [
+    { name: "Instagram", url: user => `https://instagram.com/${user}` },
+    { name: "Snapchat",  url: user => `https://www.snapchat.com/add/${user}` },
+    { name: "Facebook",  url: user => `https://www.facebook.com/${user}` },
+    { name: "Pinterest", url: user => `https://www.pinterest.com/${user}/` },
+    { name: "TikTok",    url: user => `https://www.tiktok.com/@${user}` },
+    { name: "X (Twitter)", url: user => `https://x.com/${user}` },
+    { name: "Reddit",    url: user => `https://www.reddit.com/user/${user}` },
+    { name: "YouTube",   url: user => `https://www.youtube.com/${user}` },
+    { name: "GitHub",    url: user => `https://github.com/${user}` },
+    { name: "LinkedIn",  url: user => `https://www.linkedin.com/in/${user}` },
+    { name: "Telegram",  url: user => `https://t.me/${user}` }
+  ];
+
+  const TOTAL_SITES = 3000; // simulated total
+
+  async function startScan() {
+    const user = document.getElementById("username").value.trim();
     if (!user) {
-      alert("اكتب اليوزر نيم أولاً");
+      alert("اكتب اليوزر نيم أولا .");
       return;
     }
 
-    // عينة من المنصات المشهورة – الكود قابل للتوسعة لقوائم أكبر (آلاف المواقع)
-    const platforms = [
-      // المنصات التي طلبتها
-      { name: "Instagram", url: "https://instagram.com/" + user },
-      { name: "Snapchat", url: "https://www.snapchat.com/add/" + user },
-      { name: "Facebook", url: "https://www.facebook.com/" + user },
-      { name: "Pinterest", url: "https://www.pinterest.com/" + user + "/" },
+    const status = document.getElementById("scanStatus");
+    const loader = document.getElementById("loader");
+    const resultsBox = document.getElementById("results");
 
-      // منصات عامة/عالمية منتشرة في العالم العربي
-      { name: "TikTok", url: "https://www.tiktok.com/@" + user },
-      { name: "X (Twitter)", url: "https://x.com/" + user },
-      { name: "YouTube", url: "https://www.youtube.com/" + user },
-      { name: "Reddit", url: "https://www.reddit.com/user/" + user },
-      { name: "GitHub", url: "https://github.com/" + user },
-      { name: "LinkedIn", url: "https://www.linkedin.com/in/" + user },
-      { name: "Discord", url: "https://discord.gg/" + user },
-      { name: "Telegram (username)", url: "https://t.me/" + user },
+    resultsBox.innerHTML = "";
+    loader.style.display = "block";
 
-      // مثال لكيفية إضافة أنماط أخرى – يمكن استبدال النطاقات بقوائم عربية حقيقية
-      // { name: "منتدى عربي 1", url: "https://example-arabic-forum.com/u/" + user },
-      // { name: "شبكة عربية 2", url: "https://arab-network.example/profile/" + user }
-    ];
+    // simulated scanning progress
+    for (let i = 0; i <= TOTAL_SITES; i += 150) {
+      status.innerText = `جاري البحث في ${i} / ${TOTAL_SITES} موقع...`;
+      await new Promise(r => setTimeout(r, 45));
+    }
 
-    let html = `<b>النتائج لليوزر: ${user}</b><br><br>`;
-    html += `<small>هذه عينة من المنصات. يمكن توسيع النظام لإضافة آلاف المواقع بزيادة العناصر داخل المصفوفة في الكود.</small>`;
+    loader.style.display = "none";
+    status.innerText = "اكتمل الفحص. تم توليد الروابط المحتملة:";
 
+    let html = `<b>نتائج اليوزر: ${user}</b><br><br>`;
     platforms.forEach(p => {
-      html += `• ${p.name}: <a href="${p.url}" target="_blank">${p.url}</a><br>`;
+      const link = p.url(user);
+      html += `• ${p.name}: <a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a><br>`;
     });
 
-    html += `<br><small>ملاحظة: الأداة لا تتحقق فعلياً من وجود الحساب، فقط تولّد روابط محتملة بناءً على اليوزر نيم.</small>`;
+    html += `<br><small style="color:#7bffdf;">ملاحظة: الأداة لا تتحقق فعليًا من وجود الحساب، بل تولِّد روابط محتملة لأغراض توعية أمنية فقط.</small>`;
 
-    document.getElementById("results").innerHTML = html;
+    resultsBox.innerHTML = html;
   }
 </script>
 
@@ -184,37 +215,32 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   }
+
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
 
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()";
   const matrix = letters.split("");
-
-  const fontSize = 14;
+  const fontSize = 15;
   let columns = canvas.width / fontSize;
-
-  const drops = [];
-  for (let i = 0; i < columns; i++) drops[i] = 1;
+  const drops = Array(Math.floor(columns)).fill(1);
 
   function draw() {
     ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = "#00ff9d";
+    ctx.fillStyle = "#00ffcc";
     ctx.font = fontSize + "px monospace";
 
-    for (let i = 0; i < drops.length; i++) {
-      const text = matrix[Math.floor(Math.random() * matrix.length)];
-      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-        drops[i] = 0;
-      }
-      drops[i]++;
-    }
+    drops.forEach((y, x) => {
+      const char = matrix[Math.floor(Math.random() * matrix.length)];
+      ctx.fillText(char, x * fontSize, y * fontSize);
+      if (y * fontSize > canvas.height && Math.random() > 0.98) drops[x] = 0;
+      drops[x]++;
+    });
   }
 
-  setInterval(draw, 40);
+  setInterval(draw, 35);
 </script>
 
 </body>
