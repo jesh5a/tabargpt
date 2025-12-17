@@ -6,31 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    <script>
-(async () => {
-  try {
-    await fetch("https://api.tabargpt.com/api/visit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ page: location.pathname }),
-      keepalive: true
-    });
-  } catch (e) {}
-})();
-</script>
-    <script>
-(async () => {
-  try {
-    await fetch("https://api.tabargpt.com/api/visit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ page: location.pathname }),
-      keepalive: true
-    });
-  } catch (e) {}
-})();
-</script>
-
     body {
       margin: 0;
       font-family: 'Courier New', monospace;
@@ -158,115 +133,130 @@
     }
   </style>
 </head>
+
 <body>
+  <canvas id="matrix"></canvas>
 
-<canvas id="matrix"></canvas>
+  <div class="panel">
+    <h1>رصد اليوزر نيم لمواقع التواصل الاجتماعي - طبار الجماجم 💀</h1>
+    <div class="sub"> أداة رصد(OSINT) تعتمد على أنماط اليوزر نيم فقط · فحص صوري لحد 3000 موقع</div>
 
-<div class="panel">
-  <h1>رصد اليوزر نيم لمواقع التواصل الاجتماعي - طبار الجماجم 💀</h1>
-  <div class="sub"> أداة رصد(OSINT) تعتمد على أنماط اليوزر نيم فقط · فحص صوري لحد 3000 موقع</div>
+    <label>ادخل اليوزر نيم:</label>
+    <input id="username" placeholder="example123">
 
-  <label>ادخل اليوزر نيم:</label>
-  <input id="username" placeholder="example123">
+    <div class="scan-status" id="scanStatus"></div>
+    <div class="loader" id="loader"></div>
 
-  <div class="scan-status" id="scanStatus"></div>
-  <div class="loader" id="loader"></div>
+    <button class="btn" onclick="startScan()">بدء الفحص</button>
 
-  <button class="btn" onclick="startScan()">بدء الفحص</button>
-
-  <div class="results" id="results">
-    سيتم عرض النتائج هنا بعد اتمام الفحص.
+    <div class="results" id="results">
+      سيتم عرض النتائج هنا بعد اتمام الفحص.
+    </div>
   </div>
-</div>
 
-<script>
-  const platforms = [
-    { name: "Instagram", url: user => `https://instagram.com/${user}` },
-    { name: "Snapchat",  url: user => `https://www.snapchat.com/add/${user}` },
-    { name: "Facebook",  url: user => `https://www.facebook.com/${user}` },
-    { name: "Pinterest", url: user => `https://www.pinterest.com/${user}/` },
-    { name: "TikTok",    url: user => `https://www.tiktok.com/@${user}` },
-    { name: "X (Twitter)", url: user => `https://x.com/${user}` },
-    { name: "Reddit",    url: user => `https://www.reddit.com/user/${user}` },
-    { name: "YouTube",   url: user => `https://www.youtube.com/${user}` },
-    { name: "GitHub",    url: user => `https://github.com/${user}` },
-    { name: "LinkedIn",  url: user => `https://www.linkedin.com/in/${user}` },
-    { name: "Telegram",  url: user => `https://t.me/${user}` }
-  ];
+  <!-- ✅ Visit tracker (مرة وحدة فقط) -->
+  <script>
+    (async () => {
+      try {
+        await fetch("https://api.tabargpt.com/api/visit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            page: location.pathname,
+            ref: document.referrer || null,
+            ua: navigator.userAgent
+          }),
+          keepalive: true
+        });
+      } catch (e) {}
+    })();
+  </script>
 
-  const TOTAL_SITES = 3000; // simulated total
+  <script>
+    const platforms = [
+      { name: "Instagram", url: user => `https://instagram.com/${user}` },
+      { name: "Snapchat",  url: user => `https://www.snapchat.com/add/${user}` },
+      { name: "Facebook",  url: user => `https://www.facebook.com/${user}` },
+      { name: "Pinterest", url: user => `https://www.pinterest.com/${user}/` },
+      { name: "TikTok",    url: user => `https://www.tiktok.com/@${user}` },
+      { name: "X (Twitter)", url: user => `https://x.com/${user}` },
+      { name: "Reddit",    url: user => `https://www.reddit.com/user/${user}` },
+      { name: "YouTube",   url: user => `https://www.youtube.com/${user}` },
+      { name: "GitHub",    url: user => `https://github.com/${user}` },
+      { name: "LinkedIn",  url: user => `https://www.linkedin.com/in/${user}` },
+      { name: "Telegram",  url: user => `https://t.me/${user}` }
+    ];
 
-  async function startScan() {
-    const user = document.getElementById("username").value.trim();
-    if (!user) {
-      alert("اكتب اليوزر نيم أولا .");
-      return;
+    const TOTAL_SITES = 3000; // simulated total
+
+    async function startScan() {
+      const user = document.getElementById("username").value.trim();
+      if (!user) {
+        alert("اكتب اليوزر نيم أولا .");
+        return;
+      }
+
+      const status = document.getElementById("scanStatus");
+      const loader = document.getElementById("loader");
+      const resultsBox = document.getElementById("results");
+
+      resultsBox.innerHTML = "";
+      loader.style.display = "block";
+
+      for (let i = 0; i <= TOTAL_SITES; i += 150) {
+        status.innerText = `جاري البحث في ${i} / ${TOTAL_SITES} موقع...`;
+        await new Promise(r => setTimeout(r, 45));
+      }
+
+      loader.style.display = "none";
+      status.innerText = "اكتمل الفحص. تم توليد الروابط المحتملة:";
+
+      let html = `<b>نتائج اليوزر: ${user}</b><br><br>`;
+      platforms.forEach(p => {
+        const link = p.url(user);
+        html += `• ${p.name}: <a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a><br>`;
+      });
+
+      html += `<br><small style="color:#7bffdf;">ملاحظة: الأداة لا تتحقق فعليًا من وجود الحساب، بل تولِّد روابط محتملة لأغراض توعية أمنية فقط.</small>`;
+      resultsBox.innerHTML = html;
+    }
+  </script>
+
+  <script>
+    // MATRIX RAIN EFFECT
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     }
 
-    const status = document.getElementById("scanStatus");
-    const loader = document.getElementById("loader");
-    const resultsBox = document.getElementById("results");
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
 
-    resultsBox.innerHTML = "";
-    loader.style.display = "block";
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()";
+    const matrix = letters.split("");
+    const fontSize = 15;
+    let columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
 
-    // simulated scanning progress
-    for (let i = 0; i <= TOTAL_SITES; i += 150) {
-      status.innerText = `جاري البحث في ${i} / ${TOTAL_SITES} موقع...`;
-      await new Promise(r => setTimeout(r, 45));
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#00ffcc";
+      ctx.font = fontSize + "px monospace";
+
+      drops.forEach((y, x) => {
+        const char = matrix[Math.floor(Math.random() * matrix.length)];
+        ctx.fillText(char, x * fontSize, y * fontSize);
+        if (y * fontSize > canvas.height && Math.random() > 0.98) drops[x] = 0;
+        drops[x]++;
+      });
     }
 
-    loader.style.display = "none";
-    status.innerText = "اكتمل الفحص. تم توليد الروابط المحتملة:";
-
-    let html = `<b>نتائج اليوزر: ${user}</b><br><br>`;
-    platforms.forEach(p => {
-      const link = p.url(user);
-      html += `• ${p.name}: <a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a><br>`;
-    });
-
-    html += `<br><small style="color:#7bffdf;">ملاحظة: الأداة لا تتحقق فعليًا من وجود الحساب، بل تولِّد روابط محتملة لأغراض توعية أمنية فقط.</small>`;
-
-    resultsBox.innerHTML = html;
-  }
-</script>
-
-<script>
-  // MATRIX RAIN EFFECT
-  const canvas = document.getElementById('matrix');
-  const ctx = canvas.getContext('2d');
-
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
-
-  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()";
-  const matrix = letters.split("");
-  const fontSize = 15;
-  let columns = canvas.width / fontSize;
-  const drops = Array(Math.floor(columns)).fill(1);
-
-  function draw() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = "#00ffcc";
-    ctx.font = fontSize + "px monospace";
-
-    drops.forEach((y, x) => {
-      const char = matrix[Math.floor(Math.random() * matrix.length)];
-      ctx.fillText(char, x * fontSize, y * fontSize);
-      if (y * fontSize > canvas.height && Math.random() > 0.98) drops[x] = 0;
-      drops[x]++;
-    });
-  }
-
-  setInterval(draw, 35);
-</script>
-
+    setInterval(draw, 35);
+  </script>
 </body>
 </html>
