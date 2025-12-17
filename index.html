@@ -18,6 +18,19 @@
   } catch (e) {}
 })();
 </script>
+    <script>
+(async () => {
+  try {
+    await fetch("https://api.tabargpt.com/api/visit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ page: location.pathname }),
+      keepalive: true
+    });
+  } catch (e) {}
+})();
+</script>
+
     body {
       margin: 0;
       font-family: 'Courier New', monospace;
