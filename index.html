@@ -6,6 +6,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+    <script>
+(async () => {
+  try {
+    await fetch("https://api.tabargpt.com/api/visit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ page: location.pathname }),
+      keepalive: true
+    });
+  } catch (e) {}
+})();
+</script>
     body {
       margin: 0;
       font-family: 'Courier New', monospace;
